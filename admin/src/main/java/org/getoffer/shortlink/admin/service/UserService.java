@@ -2,6 +2,7 @@ package org.getoffer.shortlink.admin.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.getoffer.shortlink.admin.dao.entity.UserDO;
+import org.getoffer.shortlink.admin.dto.resq.UserRespActualDTO;
 import org.getoffer.shortlink.admin.dto.resq.UserRespDTO;
 
 public interface UserService extends IService<UserDO> {
@@ -11,4 +12,6 @@ public interface UserService extends IService<UserDO> {
      * @return 返回用户信息
      */
     UserRespDTO getUserByUsername(String username);
+
+    UserRespActualDTO getUserActualByUsername(String username);
 }
