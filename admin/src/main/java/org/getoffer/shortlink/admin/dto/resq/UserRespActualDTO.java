@@ -3,12 +3,9 @@ package org.getoffer.shortlink.admin.dto.resq;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 import org.getoffer.shortlink.admin.common.serilize.PhoneDesensitizationSerializer;
-
-/**
-* 用户返回实体
-*/
 @Data
-public class UserRespDTO {
+public class UserRespActualDTO {
+
     /**
      * 返回用户ID
      */
@@ -27,7 +24,6 @@ public class UserRespDTO {
     /**
      * 返回手机号
      */
-    @JsonSerialize(using = PhoneDesensitizationSerializer.class)
     private String phone;
 
     /**
