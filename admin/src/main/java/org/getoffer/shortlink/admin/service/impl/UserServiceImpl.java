@@ -13,10 +13,13 @@ import org.getoffer.shortlink.admin.dto.resq.UserRespActualDTO;
 import org.getoffer.shortlink.admin.dto.resq.UserRespDTO;
 import org.getoffer.shortlink.admin.service.UserService;
 import org.redisson.api.RBloomFilter;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static org.getoffer.shortlink.admin.common.constant.RedisCacheConstant.LOCK_USER_REGISTER_KEY;
 import static org.getoffer.shortlink.admin.common.enums.UserErrorCodeEnum.USER_SAVE_ERROR;
 import static org.getoffer.shortlink.admin.common.enums.UserErrorCodeEnum.USER__NAME_EXISTS;
 
@@ -30,6 +33,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
     // 布隆过滤器
     @Autowired
     private RBloomFilter<String> userRegisterCachePenetrationBloomFilter;
+    private RedissonClient redissonClient;
 
 
     @Override
@@ -90,12 +94,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
 
     @Override
     public Boolean hasUsername(String username) {
-//        不使用布隆过滤器的版本
-//        LambdaQueryWrapper<UserDO> queryWrapper = Wrappers.lambdaQuery(UserDO.class).eq(UserDO::getUsername, username);
-//        UserDO userDO = baseMapper.selectOne(queryWrapper);
-//        return userDO == null;
-
-//        使用布隆过滤器的版本
         return userRegisterCachePenetrationBloomFilter.contains(username);
     }
 
@@ -104,12 +102,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         if(hasUsername(reqDTO.getUsername())){
             throw new ClientException(USER__NAME_EXISTS);
         }
+        RLock lock = redissonClient.getLock(LOCK_USER_REGISTER_KEY + reqDTO.getUsername());
 
-        int insert = baseMapper.insert(BeanUtil.toBean(reqDTO, UserDO.class));
-        if (insert < 1) {
-            throw new ClientException(USER_SAVE_ERROR);
+        try {
+            if (lock.tryLock()) {
+                int insert = baseMapper.insert(BeanUtil.toBean(reqDTO, UserDO.class));
+                if (insert < 1) {
+                    throw new ClientException(USER_SAVE_ERROR);
+                }
+                userRegisterCachePenetrationBloomFilter.add(reqDTO.getUsername());
+                return;
+            }
+            throw new ClientException(USER__NAME_EXISTS);
+        } finally {
+            lock.unlock();
         }
 
-        userRegisterCachePenetrationBloomFilter.add(reqDTO.getUsername());
+
     }
 }
