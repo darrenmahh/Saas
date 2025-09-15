@@ -1,6 +1,6 @@
 package org.getoffer.shortlink.admin.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -11,6 +11,7 @@ public class UserDO {
     /**
      * 用户ID
      */
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
@@ -46,15 +47,18 @@ public class UserDO {
     /**
      * 创建时间
      */
+    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
     /**
      * 更新时间
      */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
 
     /**
      * 删除标志 0-未删除 1-已删除
      */
+    @TableField(fill = FieldFill.INSERT)
     private Integer delFlag;
 }
