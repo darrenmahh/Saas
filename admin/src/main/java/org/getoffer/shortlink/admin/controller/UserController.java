@@ -4,13 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.getoffer.shortlink.admin.common.convention.Exception.ClientException;
 import org.getoffer.shortlink.admin.common.convention.result.Result;
 import org.getoffer.shortlink.admin.common.convention.result.Results;
-import org.getoffer.shortlink.admin.common.enums.UserErrorCodeEnum;
 import org.getoffer.shortlink.admin.dto.req.UserRegisterReqDTO;
 import org.getoffer.shortlink.admin.dto.resq.UserRespActualDTO;
 import org.getoffer.shortlink.admin.dto.resq.UserRespDTO;
 import org.getoffer.shortlink.admin.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
+import static org.getoffer.shortlink.admin.common.convention.errorcode.BaseErrorCode.USER_NAME_NULL_ERROR;
 import static org.getoffer.shortlink.admin.common.enums.UserErrorCodeEnum.USER__NAME_EXISTS;
 
 @RestController
@@ -24,7 +24,7 @@ public class UserController {
      * @param username
      * @return
      */
-    @GetMapping("/api/shortlink/v1/user/{username}")
+    @GetMapping("/api/short-link/v1/user/{username}")
     public Result<UserRespDTO> getUserByUsername(@PathVariable("username") String username) {
         return Results.success(userService.getUserByUsername(username));
     }
@@ -34,7 +34,7 @@ public class UserController {
      * @param username
      * @return
      */
-    @GetMapping("/api/shortlink/v1/actual/user/{username}")
+    @GetMapping("/api/short-link/v1/actual/user/{username}")
     public Result<UserRespActualDTO> getUserActualByUsername(@PathVariable("username") String username) {
         return Results.success(userService.getUserActualByUsername(username));
     }
@@ -44,16 +44,21 @@ public class UserController {
      * @param username 用户名
      * @return 存在返回true 不存在返回false
      */
-    @GetMapping("/api/shortlink/v1/user/has-username")
+    @GetMapping("/api/short-link/v1/user/has-username")
     public Result<Boolean> hasUsername(String username) {
+        if (username == null || username.trim().isEmpty()) {
+            throw new ClientException(USER_NAME_NULL_ERROR);
+        }
         return  Results.success(userService.hasUsername(username));
     }
 
-    @PostMapping("/api/shortlink/v1/user/register")
+    /**
+     * 用户注册
+     * @param reqDTO 注册请求实体
+     * @return 注册结果
+     */
+    @PostMapping("/api/short-link/v1/user/register")
     public Result<Void> register(@RequestBody UserRegisterReqDTO reqDTO) {
-        if (userService.hasUsername(reqDTO.getUsername())) {
-            throw new ClientException(USER__NAME_EXISTS);
-        }
         System.out.println("=== 开始注册用户：" + reqDTO.getUsername() + " ===");
         userService.register(reqDTO);
         return Results.success();
