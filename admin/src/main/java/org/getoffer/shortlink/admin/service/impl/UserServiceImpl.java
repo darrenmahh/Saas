@@ -33,6 +33,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
     // 布隆过滤器
     @Autowired
     private RBloomFilter<String> userRegisterCachePenetrationBloomFilter;
+
+    @Autowired
     private RedissonClient redissonClient;
 
 
