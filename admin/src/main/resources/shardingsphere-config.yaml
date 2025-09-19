@@ -3,9 +3,9 @@ dataSources:
   ds_0:
     dataSourceClassName: com.zaxxer.hikari.HikariDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    jdbcUrl: jdbc:mysql://127.0.0.1:3306/shortlink?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&serverTimezone=GMT%2B8
+    jdbcUrl: jdbc:mysql://117.72.194.193:3306/link?useUnicode=true&characterEncoding=UTF-8&rewriteBatchedStatements=true&allowMultiQueries=true&serverTimezone=Asia/Shanghai
     username: root
-    password: "wtmc"
+    password: mysqlmima0210
 
 rules:
   - !SHARDING
@@ -21,6 +21,10 @@ rules:
             shardingColumn: username
             # 分片算法，对应 rules[0].shardingAlgorithms
             shardingAlgorithmName: user_table_hash_mod
+        # 添加主键生成策略
+        keyGenerateStrategy:
+          column: id
+          keyGeneratorName: snowflake
     # 分片算法
     shardingAlgorithms:
       # 数据表分片算法
@@ -30,6 +34,12 @@ rules:
         # 分片数量
         props:
           sharding-count: 16
+    # 添加主键生成器
+    keyGenerators:
+      snowflake:
+        type: SNOWFLAKE
+        props:
+          worker-id: 1
   - !ENCRYPT
     # 需要加密的表集合
     tables:
