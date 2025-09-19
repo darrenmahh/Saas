@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.getoffer.shortlink.admin.common.convention.Exception.ClientException;
 import org.getoffer.shortlink.admin.common.convention.result.Result;
 import org.getoffer.shortlink.admin.common.convention.result.Results;
+import org.getoffer.shortlink.admin.dto.req.UserLoginReqDTO;
 import org.getoffer.shortlink.admin.dto.req.UserRegisterReqDTO;
 import org.getoffer.shortlink.admin.dto.req.UserUpdateReqDTO;
+import org.getoffer.shortlink.admin.dto.resq.UserLoginRespDTO;
 import org.getoffer.shortlink.admin.dto.resq.UserRespActualDTO;
 import org.getoffer.shortlink.admin.dto.resq.UserRespDTO;
 import org.getoffer.shortlink.admin.service.UserService;
@@ -31,8 +33,8 @@ public class UserController {
 
     /**
      * 获取用户的真实信息，包含手机号等敏感信息
-     * @param username
-     * @return
+     * @param username 用户名
+     * @return 返回用户真实信息
      */
     @GetMapping("/api/short-link/v1/actual/user/{username}")
     public Result<UserRespActualDTO> getUserActualByUsername(@PathVariable("username") String username) {
@@ -74,5 +76,17 @@ public class UserController {
         System.out.println("=== 开始修改用户：" + reqDTO.getUsername() + " ===");
         userService.update(reqDTO);
         return Results.success();
+    }
+
+    /**
+     *  用户登录
+     * @param reqDTO 登录请求实体
+     * @return 返回登录返回实体
+     */
+    @PostMapping("/api/short-link/v1/user/login")
+    public Result<UserLoginRespDTO> login(@RequestBody UserLoginReqDTO reqDTO) {
+        System.out.println("=== 开始注册用户：" + reqDTO.getUsername() + " ===");
+        UserLoginRespDTO result =  userService.login(reqDTO);
+        return Results.success(result);
     }
 }
