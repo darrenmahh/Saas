@@ -2,6 +2,7 @@ package org.getoffer.shortlink.admin.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import org.getoffer.shortlink.admin.common.convention.Exception.ClientException;
 import org.getoffer.shortlink.admin.dao.entity.UserDO;
 import org.getoffer.shortlink.admin.dao.mapper.UserMapper;
 import org.getoffer.shortlink.admin.dto.req.UserRegisterReqDTO;
+import org.getoffer.shortlink.admin.dto.req.UserUpdateReqDTO;
 import org.getoffer.shortlink.admin.dto.resq.UserRespActualDTO;
 import org.getoffer.shortlink.admin.dto.resq.UserRespDTO;
 import org.getoffer.shortlink.admin.service.UserService;
@@ -20,8 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static org.getoffer.shortlink.admin.common.constant.RedisCacheConstant.LOCK_USER_REGISTER_KEY;
-import static org.getoffer.shortlink.admin.common.enums.UserErrorCodeEnum.USER_SAVE_ERROR;
-import static org.getoffer.shortlink.admin.common.enums.UserErrorCodeEnum.USER__NAME_EXISTS;
+import static org.getoffer.shortlink.admin.common.enums.UserErrorCodeEnum.*;
 
 /*
 * 用户接口实现层
@@ -121,5 +122,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         }
 
 
+    }
+
+    @Override
+    public void update(UserUpdateReqDTO reqDTO) {
+        // TODO 此处需要判断是否是登录用户修改自己的信息
+        if (!hasUsername((reqDTO.getUsername()))) {
+            throw new ClientException(USER_NULL);
+        }
+        LambdaUpdateWrapper<UserDO> eq = Wrappers.lambdaUpdate(UserDO.class)
+                .eq(UserDO::getUsername, reqDTO.getUsername());
+        int update = baseMapper.update(BeanUtil.toBean(reqDTO, UserDO.class), eq);
     }
 }

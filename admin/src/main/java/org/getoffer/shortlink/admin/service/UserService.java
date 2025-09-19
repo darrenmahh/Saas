@@ -3,6 +3,7 @@ package org.getoffer.shortlink.admin.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.getoffer.shortlink.admin.dao.entity.UserDO;
 import org.getoffer.shortlink.admin.dto.req.UserRegisterReqDTO;
+import org.getoffer.shortlink.admin.dto.req.UserUpdateReqDTO;
 import org.getoffer.shortlink.admin.dto.resq.UserRespActualDTO;
 import org.getoffer.shortlink.admin.dto.resq.UserRespDTO;
 
@@ -24,4 +25,10 @@ public interface UserService extends IService<UserDO> {
     Boolean hasUsername(String username);
 
     void register(UserRegisterReqDTO reqDTO);
+
+    /**
+     *  根据用户名修改用户
+     * @param reqDTO 修改用户请求实体
+     */
+    void update(UserUpdateReqDTO reqDTO);
 }

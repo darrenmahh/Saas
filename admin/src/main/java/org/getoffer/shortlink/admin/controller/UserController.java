@@ -5,13 +5,13 @@ import org.getoffer.shortlink.admin.common.convention.Exception.ClientException;
 import org.getoffer.shortlink.admin.common.convention.result.Result;
 import org.getoffer.shortlink.admin.common.convention.result.Results;
 import org.getoffer.shortlink.admin.dto.req.UserRegisterReqDTO;
+import org.getoffer.shortlink.admin.dto.req.UserUpdateReqDTO;
 import org.getoffer.shortlink.admin.dto.resq.UserRespActualDTO;
 import org.getoffer.shortlink.admin.dto.resq.UserRespDTO;
 import org.getoffer.shortlink.admin.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 import static org.getoffer.shortlink.admin.common.convention.errorcode.BaseErrorCode.USER_NAME_NULL_ERROR;
-import static org.getoffer.shortlink.admin.common.enums.UserErrorCodeEnum.USER__NAME_EXISTS;
 
 @RestController
 @RequiredArgsConstructor
@@ -61,6 +61,18 @@ public class UserController {
     public Result<Void> register(@RequestBody UserRegisterReqDTO reqDTO) {
         System.out.println("=== 开始注册用户：" + reqDTO.getUsername() + " ===");
         userService.register(reqDTO);
+        return Results.success();
+    }
+
+    /**
+     *
+     * @param reqDTO 修改请求实体
+     * @return 修改结果
+     */
+    @PutMapping("/api/short-link/v1/user/update")
+    public Result<Void> update(@RequestBody UserUpdateReqDTO reqDTO) {
+        System.out.println("=== 开始修改用户：" + reqDTO.getUsername() + " ===");
+        userService.update(reqDTO);
         return Results.success();
     }
 }
