@@ -113,7 +113,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
     }
 
     /**
-     * 查找是否有当前用户
+     * 查找数据库是否有当前用户
      * @param username 用户名
      * @return 存在返回true 不存在返回false
      */
@@ -196,5 +196,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         Object remoteToken = stringRedisTemplate.opsForHash().get("login_" + username, "token");
         System.out.println("=== 检查登录状态，远程 token：" + remoteToken + "，本地 token：" + token + " ===");
         return remoteToken != null && Objects.equals(remoteToken.toString(), token);
+    }
+
+    /**
+     * 用户登出
+     * @param username 用户名
+     */
+    @Override
+    public void logOut(String username, String token) {
+        if (!checkLogin(username, token)) {
+            throw new ClientException("用户未登录，无法登出");
+        }
+        Object hasLogin = stringRedisTemplate.opsForHash().get("login_" + username, "token");
+        if (hasLogin != null) {
+            stringRedisTemplate.delete("login_" + username);
+        }
     }
 }

@@ -99,4 +99,12 @@ public class UserController {
     public Result<Boolean> checkLogin(@RequestParam("username") String username,@RequestParam("token") String token) {
         return Results.success(userService.checkLogin(username, token));
     }
+
+
+    @DeleteMapping("/api/short-link/v1/user/logout")
+    public Result<Void> logout(@RequestParam("username") String username, @RequestParam("token") String token) {
+        // 目前前端不需要登出功能，后续如果需要可以补充
+        userService.logOut(username, token);
+        return Results.success();
+    }
 }
