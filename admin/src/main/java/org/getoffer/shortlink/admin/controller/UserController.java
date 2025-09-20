@@ -85,8 +85,18 @@ public class UserController {
      */
     @PostMapping("/api/short-link/v1/user/login")
     public Result<UserLoginRespDTO> login(@RequestBody UserLoginReqDTO reqDTO) {
-        System.out.println("=== 开始注册用户：" + reqDTO.getUsername() + " ===");
+        System.out.println("=== 开始登录用户：" + reqDTO.getUsername() + " ===");
         UserLoginRespDTO result =  userService.login(reqDTO);
         return Results.success(result);
+    }
+
+    /**
+     * 检查用户登录状态
+     * @param token 登录token
+     * @return 登录返回true 未登录返回false
+     */
+    @GetMapping("/api/short-link/v1/user/check-login")
+    public Result<Boolean> checkLogin(@RequestParam("username") String username,@RequestParam("token") String token) {
+        return Results.success(userService.checkLogin(username, token));
     }
 }

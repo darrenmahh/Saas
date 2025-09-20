@@ -35,4 +35,6 @@ public interface UserService extends IService<UserDO> {
     void update(UserUpdateReqDTO reqDTO);
 
     UserLoginRespDTO login(UserLoginReqDTO reqDTO);
+
+    Boolean checkLogin(String username, String token);
 }

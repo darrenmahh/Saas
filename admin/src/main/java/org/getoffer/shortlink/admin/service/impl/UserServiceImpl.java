@@ -25,6 +25,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import static org.getoffer.shortlink.admin.common.constant.RedisCacheConstant.LOCK_USER_REGISTER_KEY;
@@ -39,11 +40,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
 
     private final StringRedisTemplate stringRedisTemplate;
     // 布隆过滤器
-    private RBloomFilter<String> userRegisterCachePenetrationBloomFilter;
+    private final RBloomFilter<String> userRegisterCachePenetrationBloomFilter;
 
-    private RedissonClient redissonClient;
+    private final RedissonClient redissonClient;
 
-    private final StringRedisTemplate redisTemplate;
 
     /**
      * 根据用户名查询用户
@@ -176,8 +176,25 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         if (userDO == null) {
             throw new ClientException(USER_NULL);
         }
+        Boolean hasKey = stringRedisTemplate.hasKey("login_" + reqDTO.getUsername());
+        if (hasKey != null && hasKey) {
+            throw new ClientException("用户已登录，请勿重复登录");
+        }
         String uuid = UUID.randomUUID().toString();
-        stringRedisTemplate.opsForValue().set(uuid, JSON.toJSONString(userDO), 30L, TimeUnit.MINUTES);
+        stringRedisTemplate.opsForHash().put("login_" + reqDTO.getUsername(), "token", uuid);
+        stringRedisTemplate.expire("login_" + reqDTO.getUsername(), 30L, TimeUnit.MINUTES);
         return new UserLoginRespDTO(uuid);
+    }
+
+    /**
+     * 检查登录状态
+     * @param token 登录 token
+     * @return true 已登录 false 未登录
+     */
+    @Override
+    public Boolean checkLogin(String username, String token) {
+        Object remoteToken = stringRedisTemplate.opsForHash().get("login_" + username, "token");
+        System.out.println("=== 检查登录状态，远程 token：" + remoteToken + "，本地 token：" + token + " ===");
+        return remoteToken != null && Objects.equals(remoteToken.toString(), token);
     }
 }
