@@ -2,7 +2,6 @@ package org.getoffer.shortlink.admin.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.UUID;
-import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -182,7 +181,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         }
         String uuid = UUID.randomUUID().toString();
         stringRedisTemplate.opsForHash().put("login_" + reqDTO.getUsername(), "token", uuid);
-        stringRedisTemplate.expire("login_" + reqDTO.getUsername(), 30L, TimeUnit.MINUTES);
+        stringRedisTemplate.expire("login_" + reqDTO.getUsername(), 30L, TimeUnit.DAYS);
         return new UserLoginRespDTO(uuid);
     }
 
