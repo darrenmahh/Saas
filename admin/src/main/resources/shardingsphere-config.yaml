@@ -25,6 +25,15 @@ rules:
         keyGenerateStrategy:
           column: id
           keyGeneratorName: snowflake
+      t_group:
+        actualDataNodes: ds_0.t_group_${0..15}
+        tableStrategy:
+          standard:
+            shardingColumn: gid
+            shardingAlgorithmName: user_table_hash_mod
+        keyGenerateStrategy:
+          column: id
+          keyGeneratorName: snowflake
     # 分片算法
     shardingAlgorithms:
       # 数据表分片算法
@@ -58,6 +67,7 @@ rules:
             encryptorName: common_encryptor
         # 是否按照密文字段查询
         queryWithCipherColumn: true
+
     # 加密算法
     encryptors:
       # 自定义加密算法名称
