@@ -2,12 +2,14 @@ package org.getoffer.shortlink.admin.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.getoffer.shortlink.admin.common.biz.user.UserContext;
 import org.getoffer.shortlink.admin.dao.entity.GroupDO;
 import org.getoffer.shortlink.admin.dao.mapper.GroupMapper;
+import org.getoffer.shortlink.admin.dto.req.ShortLinkGroupSortReqDTO;
 import org.getoffer.shortlink.admin.dto.req.ShortLinkGroupUpdateReqDTO;
 import org.getoffer.shortlink.admin.dto.resq.ShortLinkGroupSaveRespDTO;
 import org.getoffer.shortlink.admin.service.GroupService;
@@ -65,6 +67,18 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
         GroupDO groupDO = new GroupDO();
         groupDO.setDelFlag(1);
         baseMapper.update(groupDO, deleteWrapper);
+    }
+
+    @Override
+    public void sortGroup(List<ShortLinkGroupSortReqDTO> reqDTO) {
+        reqDTO.forEach(each -> {
+            GroupDO groupDO = GroupDO.builder().sortOrder(each.getSortOrder()).build();
+            LambdaUpdateWrapper<GroupDO> eq = Wrappers.lambdaUpdate(GroupDO.class)
+                    .eq(GroupDO::getUsername, UserContext.getUsername())
+                    .eq(GroupDO::getGid, each.getGid())
+                    .eq(GroupDO::getDelFlag, 0);
+            baseMapper.update(groupDO, eq);
+        });
     }
 
     private boolean hasGid(String gid) {
