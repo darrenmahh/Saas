@@ -29,11 +29,8 @@ rules:
         actualDataNodes: ds_0.t_group_${0..15}
         tableStrategy:
           standard:
-            shardingColumn: gid
-            shardingAlgorithmName: user_table_hash_mod
-        keyGenerateStrategy:
-          column: id
-          keyGeneratorName: snowflake
+            shardingColumn: username
+            shardingAlgorithmName: group_table_hash_mod
     # 分片算法
     shardingAlgorithms:
       # 数据表分片算法
@@ -41,6 +38,10 @@ rules:
         # 根据分片键 Hash 分片
         type: HASH_MOD
         # 分片数量
+        props:
+          sharding-count: 16
+      group_table_hash_mod:
+        type: HASH_MOD
         props:
           sharding-count: 16
     # 添加主键生成器
