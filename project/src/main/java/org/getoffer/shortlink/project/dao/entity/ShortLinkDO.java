@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.getoffer.shortlink.project.common.database.BaseDO;
 // import org.getoffer.shortlink.project.common.database.BaseDO;
 
 import java.util.Date;
@@ -17,12 +18,11 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("t_link")
-public class ShortLinkDO {
+public class ShortLinkDO extends BaseDO {
 
     /**
-     * ID
+     * id
      */
-    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
@@ -36,12 +36,12 @@ public class ShortLinkDO {
     private String shortUri;
 
     /**
-     * 完整短链接 域名+短链接
+     * 完整短链接
      */
     private String fullShortUrl;
 
     /**
-     * 原始连接
+     * 原始链接
      */
     private String originUrl;
 
@@ -51,14 +51,9 @@ public class ShortLinkDO {
     private Integer clickNum;
 
     /**
-     * 分组id
+     * 分组标识
      */
     private String gid;
-
-    /**
-     * 网站图标
-     */
-    private String favicon;
 
     /**
      * 启用标识 0：启用 1：未启用
@@ -71,7 +66,7 @@ public class ShortLinkDO {
     private Integer createdType;
 
     /**
-     * 有效期 0：永久 1：自定义
+     * 有效期类型 0：永久有效 1：自定义
      */
     private Integer validDateType;
 
@@ -83,20 +78,6 @@ public class ShortLinkDO {
     /**
      * 描述
      */
+    @TableField("`describe`")
     private String describe;
-
-    @TableField(fill = FieldFill.INSERT)
-    private Date createTime;
-
-    /**
-     * 修改时间
-     */
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private Date updateTime;
-
-    /**
-     * 删除标识 0：未删除 1：已删除
-     */
-    @TableField(fill = FieldFill.INSERT)
-    private Integer delFlag;
 }
