@@ -4,8 +4,8 @@ server:
 spring:
   datasource:
     username: root
-    password: mysglmima0210
-    url: jdbc:mysql://177.72.194.193:3306/Link/link?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&serverTimezone=GMT%2B8
+    password: mysqlmima0210
+    url: jdbc:mysql://117.72.194.193:3306/link?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&serverTimezone=GMT%2B8
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       connection-test-query: select 1
