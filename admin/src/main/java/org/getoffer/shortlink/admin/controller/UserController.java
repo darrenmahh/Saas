@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import static org.getoffer.shortlink.admin.common.convention.errorcode.BaseErrorCode.USER_NAME_NULL_ERROR;
 
 @RestController
+@RequestMapping("/api/short-link/admin")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -26,7 +27,7 @@ public class UserController {
      * @param username
      * @return
      */
-    @GetMapping("/api/short-link/v1/user/{username}")
+    @GetMapping("/v1/user/{username}")
     public Result<UserRespDTO> getUserByUsername(@PathVariable("username") String username) {
         return Results.success(userService.getUserByUsername(username));
     }
@@ -36,7 +37,7 @@ public class UserController {
      * @param username 用户名
      * @return 返回用户真实信息
      */
-    @GetMapping("/api/short-link/v1/actual/user/{username}")
+    @GetMapping("/v1/actual/user/{username}")
     public Result<UserRespActualDTO> getUserActualByUsername(@PathVariable("username") String username) {
         return Results.success(userService.getUserActualByUsername(username));
     }
@@ -46,7 +47,7 @@ public class UserController {
      * @param username 用户名
      * @return 存在返回true 不存在返回false
      */
-    @GetMapping("/api/short-link/v1/user/has-username")
+    @GetMapping("/v1/user/has-username")
     public Result<Boolean> hasUsername(String username) {
         if (username == null || username.trim().isEmpty()) {
             throw new ClientException(USER_NAME_NULL_ERROR);
@@ -59,7 +60,7 @@ public class UserController {
      * @param reqDTO 注册请求实体
      * @return 注册结果
      */
-    @PostMapping("/api/short-link/v1/user/register")
+    @PostMapping("/v1/user/register")
     public Result<Void> register(@RequestBody UserRegisterReqDTO reqDTO) {
         System.out.println("=== 开始注册用户：" + reqDTO.getUsername() + " ===");
         userService.register(reqDTO);
@@ -71,7 +72,7 @@ public class UserController {
      * @param reqDTO 修改请求实体
      * @return 修改结果
      */
-    @PutMapping("/api/short-link/v1/user/update")
+    @PutMapping("/v1/user/update")
     public Result<Void> update(@RequestBody UserUpdateReqDTO reqDTO) {
         System.out.println("=== 开始修改用户：" + reqDTO.getUsername() + " ===");
         userService.update(reqDTO);
@@ -83,7 +84,7 @@ public class UserController {
      * @param reqDTO 登录请求实体
      * @return 返回登录返回实体
      */
-    @PostMapping("/api/short-link/v1/user/login")
+    @PostMapping("/v1/user/login")
     public Result<UserLoginRespDTO> login(@RequestBody UserLoginReqDTO reqDTO) {
         System.out.println("=== 开始登录用户：" + reqDTO.getUsername() + " ===");
         UserLoginRespDTO result =  userService.login(reqDTO);
@@ -95,13 +96,13 @@ public class UserController {
      * @param token 登录token
      * @return 登录返回true 未登录返回false
      */
-    @GetMapping("/api/short-link/v1/user/check-login")
+    @GetMapping("/v1/user/check-login")
     public Result<Boolean> checkLogin(@RequestParam("username") String username,@RequestParam("token") String token) {
         return Results.success(userService.checkLogin(username, token));
     }
 
 
-    @DeleteMapping("/api/short-link/v1/user/logout")
+    @DeleteMapping("/v1/user/logout")
     public Result<Void> logout(@RequestParam("username") String username, @RequestParam("token") String token) {
         // 目前前端不需要登出功能，后续如果需要可以补充
         userService.logOut(username, token);
