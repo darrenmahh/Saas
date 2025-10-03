@@ -10,3 +10,12 @@ spring:
       host: 127.0.0.1
       port: 6379
 #      password: 123456
+  redis:
+    redisson:
+      config: |
+        singleServerConfig:
+          address: "redis://127.0.0.1:6379"
+          timeout: 10000
+          connectTimeout: 10000
+          connectionPoolSize: 64
+          connectionMinimumIdleSize: 24

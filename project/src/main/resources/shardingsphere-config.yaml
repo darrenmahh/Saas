@@ -16,6 +16,7 @@ rules:
           standard:
             shardingColumn: gid
             shardingAlgorithmName: link_table_hash_mod
+
     shardingAlgorithms:
       link_table_hash_mod:
         type: HASH_MOD
