@@ -2,11 +2,13 @@ package org.getoffer.shortlink.admin.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.UUID;
+import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.getoffer.shortlink.admin.common.biz.user.UserInfoDTO;
 import org.getoffer.shortlink.admin.common.convention.Exception.ClientException;
 import org.getoffer.shortlink.admin.dao.entity.UserDO;
 import org.getoffer.shortlink.admin.dao.mapper.UserMapper;
@@ -179,8 +181,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         if (hasKey != null && hasKey) {
             throw new ClientException("用户已登录，请勿重复登录");
         }
+        // 生成 token
         String uuid = UUID.randomUUID().toString();
+        // 构建用户信息
+        UserInfoDTO userInfoDTO = UserInfoDTO.builder()
+                .userId(userDO.getId().toString())
+                .username(userDO.getUsername())
+                .realName(userDO.getRealName())
+                .build();
+        // 存储 token 和用户信息到 Redis
         stringRedisTemplate.opsForHash().put("login_" + reqDTO.getUsername(), "token", uuid);
+        stringRedisTemplate.opsForHash().put("login_" + reqDTO.getUsername(), uuid, JSON.toJSONString(userInfoDTO));
         stringRedisTemplate.expire("login_" + reqDTO.getUsername(), 30L, TimeUnit.DAYS);
         return new UserLoginRespDTO(uuid);
     }
