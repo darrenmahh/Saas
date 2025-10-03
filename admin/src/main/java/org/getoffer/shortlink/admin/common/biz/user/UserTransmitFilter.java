@@ -29,7 +29,9 @@ public class UserTransmitFilter implements Filter {
 
     private static final List<String> IGNORE_URI = Lists.newArrayList(
             "/api/short-link/admin/v1/user/login",
-            "/api/short-link/admin/v1/user/has-username"
+            "/api/short-link/admin/v1/user/has-username",
+            "/api/short-link/admin/v1/user/register",
+            "api/short-link/admin/v1/create"
     );
 
     @SneakyThrows
@@ -46,8 +48,15 @@ public class UserTransmitFilter implements Filter {
                     returnJson((HttpServletResponse) servletResponse, JSON.toJSONString(Results.failure(new ClientException(USER_TOKEN_FAIL))));
                     return;
                 }
+                Object tokenFromRedis;
                 Object userInfoJsonStr;
                 try {
+                    // 验证 token 是否有效
+                    tokenFromRedis = stringRedisTemplate.opsForHash().get("login_" + username, "token");
+                    if (tokenFromRedis == null || !Objects.equals(tokenFromRedis.toString(), token)) {
+                        throw new ClientException(USER_TOKEN_FAIL);
+                    }
+                    // 获取用户信息（使用 token 作为 key）
                     userInfoJsonStr = stringRedisTemplate.opsForHash().get("login_" + username, token);
                     if (userInfoJsonStr == null) {
                         throw new ClientException(USER_TOKEN_FAIL);
@@ -56,6 +65,7 @@ public class UserTransmitFilter implements Filter {
                     returnJson((HttpServletResponse) servletResponse, JSON.toJSONString(Results.failure(new ClientException(USER_TOKEN_FAIL))));
                     return;
                 }
+                // 设置用户上下文
                 UserInfoDTO userInfoDTO = JSON.parseObject(userInfoJsonStr.toString(), UserInfoDTO.class);
                 UserContext.setUser(userInfoDTO);
             }
