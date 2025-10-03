@@ -3,6 +3,7 @@ package org.getoffer.shortlink.project.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.text.StrBuilder;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -14,11 +15,16 @@ import org.getoffer.shortlink.project.dao.mapper.ShortLinkMapper;
 import org.getoffer.shortlink.project.dto.req.ShortLinkCreateReqDTO;
 import org.getoffer.shortlink.project.dto.req.ShortLinkPageReqDTO;
 import org.getoffer.shortlink.project.dto.resp.ShortLinkCreateRespDTO;
+import org.getoffer.shortlink.project.dto.resp.ShortLinkGroupCountQueryRespDTO;
 import org.getoffer.shortlink.project.dto.resp.ShortLinkPageRespDTO;
 import org.getoffer.shortlink.project.service.ShortLinkService;
 import org.getoffer.shortlink.project.toolkit.HashUtil;
 import org.redisson.api.RBloomFilter;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+
 
 @Slf4j
 @Service
@@ -78,6 +84,18 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                 .orderByDesc(ShortLinkDO::getCreateTime);
         IPage<ShortLinkDO> resultPage = baseMapper.selectPage(reqDTO , shortLinkDOLambdaQueryWrapper);
         return resultPage.convert(each -> BeanUtil.toBean(each, ShortLinkPageRespDTO.class));
+    }
+
+    @Override
+    public List<ShortLinkGroupCountQueryRespDTO> listGroupShortLinkCount(List<String> requestParam) {
+        QueryWrapper<ShortLinkDO> queryWrapper = Wrappers.query(new ShortLinkDO())
+                .select("gid as gid, count(*) as shortLinkCount")
+                .in("gid", requestParam)
+                .eq("enable_status", 0)
+                .eq("del_flag", 0)  // 添加删除标记判断
+                .groupBy("gid");
+        List<Map<String, Object>> shortLinkDOList = baseMapper.selectMaps(queryWrapper);
+        return BeanUtil.copyToList(shortLinkDOList, ShortLinkGroupCountQueryRespDTO.class);
     }
 
     private String generateSuffix(ShortLinkCreateReqDTO reqDTO) {

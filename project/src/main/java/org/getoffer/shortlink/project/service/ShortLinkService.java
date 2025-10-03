@@ -6,7 +6,10 @@ import org.getoffer.shortlink.project.dao.entity.ShortLinkDO;
 import org.getoffer.shortlink.project.dto.req.ShortLinkCreateReqDTO;
 import org.getoffer.shortlink.project.dto.req.ShortLinkPageReqDTO;
 import org.getoffer.shortlink.project.dto.resp.ShortLinkCreateRespDTO;
+import org.getoffer.shortlink.project.dto.resp.ShortLinkGroupCountQueryRespDTO;
 import org.getoffer.shortlink.project.dto.resp.ShortLinkPageRespDTO;
+
+import java.util.List;
 
 public interface ShortLinkService extends IService<ShortLinkDO> {
 
@@ -24,4 +27,6 @@ public interface ShortLinkService extends IService<ShortLinkDO> {
      * @return 返回信息
      */
     IPage<ShortLinkPageRespDTO> pageShortLink(ShortLinkPageReqDTO reqDTO);
+
+    List<ShortLinkGroupCountQueryRespDTO> listGroupShortLinkCount(List<String> requestParam);
 }
