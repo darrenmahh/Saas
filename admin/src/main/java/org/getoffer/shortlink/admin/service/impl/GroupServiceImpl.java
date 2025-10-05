@@ -23,6 +23,11 @@ import java.util.List;
 public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implements GroupService {
     @Override
     public void saveGroup(String groupName) {
+        saveGroup(UserContext.getUsername(), groupName);
+    }
+
+    @Override
+    public void saveGroup(String username, String groupName) {
         String gid;
         do {
             gid = RandomGenerator.generateRandom();
@@ -30,7 +35,7 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
         GroupDO groupDO = GroupDO.builder()
                 .gid(gid)
                 .sortOrder(0)
-                .username(UserContext.getUsername())
+                .username(username )
                 .name(groupName)
                 .build();
         baseMapper.insert(groupDO);
@@ -80,6 +85,8 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
             baseMapper.update(groupDO, eq);
         });
     }
+
+
 
     private boolean hasGid(String gid) {
         LambdaQueryWrapper<GroupDO> lambdaQueryWrapper = Wrappers.lambdaQuery(GroupDO.class)

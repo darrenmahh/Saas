@@ -18,11 +18,13 @@ import org.getoffer.shortlink.admin.dto.req.UserUpdateReqDTO;
 import org.getoffer.shortlink.admin.dto.resq.UserLoginRespDTO;
 import org.getoffer.shortlink.admin.dto.resq.UserRespActualDTO;
 import org.getoffer.shortlink.admin.dto.resq.UserRespDTO;
+import org.getoffer.shortlink.admin.service.GroupService;
 import org.getoffer.shortlink.admin.service.UserService;
 import org.redisson.api.RBloomFilter;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +46,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
     private final RBloomFilter<String> userRegisterCachePenetrationBloomFilter;
 
     private final RedissonClient redissonClient;
+    private final GroupService groupService;
 
 
     /**
@@ -136,19 +139,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
 
         try {
             if (lock.tryLock()) {
-                int insert = baseMapper.insert(BeanUtil.toBean(reqDTO, UserDO.class));
-                if (insert < 1) {
-                    throw new ClientException(USER_SAVE_ERROR);
+                try {
+                    int insert = baseMapper.insert(BeanUtil.toBean(reqDTO, UserDO.class));
+                    if (insert < 1) {
+                        throw new ClientException(USER_SAVE_ERROR);
+                    }
+                } catch (DuplicateKeyException e) {
+                    throw new ClientException(USER_EXIST);
                 }
                 userRegisterCachePenetrationBloomFilter.add(reqDTO.getUsername());
+                groupService.saveGroup(reqDTO.getUsername(),"默认分组");
                 return;
             }
             throw new ClientException(USER__NAME_EXISTS);
         } finally {
             lock.unlock();
         }
-
-
     }
 
     @Override
