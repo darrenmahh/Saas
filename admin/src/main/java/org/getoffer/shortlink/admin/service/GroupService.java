@@ -13,7 +13,7 @@ public interface GroupService extends IService<GroupDO> {
      * 新增短链接分子
      * @param groupName 分组名
      */
-    void saveGroup(String groupName);
+    // void saveGroup(String groupName);
 
     /**
      * 查询短链接分组集合
@@ -26,6 +26,8 @@ public interface GroupService extends IService<GroupDO> {
     void deleteGroup(String gid);
 
     void sortGroup(List<ShortLinkGroupSortReqDTO> reqDTO);
+
+    void saveGroup(String groupName);
 
     void saveGroup(String username, String groupName);
 }
