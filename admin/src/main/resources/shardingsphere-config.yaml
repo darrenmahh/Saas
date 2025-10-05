@@ -6,6 +6,18 @@ dataSources:
     jdbcUrl: jdbc:mysql://117.72.194.193:3306/link?useUnicode=true&characterEncoding=UTF-8&rewriteBatchedStatements=true&allowMultiQueries=true&serverTimezone=Asia/Shanghai
     username: root
     password: mysqlmima0210
+    # 添加 HikariCP 连接池配置
+    maximumPoolSize: 10
+    minimumIdle: 5
+    connectionTimeout: 30000
+    idleTimeout: 3000000
+    maxLifetime: 600000
+    # 连接测试查询，防止使用已关闭的连接
+    connectionTestQuery: SELECT 1
+    # 验证连接的超时时间
+    validationTimeout: 5000
+    # 连接泄露检测阈值（可选）
+    leakDetectionThreshold: 30000
 
 rules:
   - !SHARDING
