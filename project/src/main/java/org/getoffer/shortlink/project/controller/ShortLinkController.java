@@ -6,6 +6,7 @@ import org.getoffer.shortlink.project.common.convention.result.Result;
 import org.getoffer.shortlink.project.common.convention.result.Results;
 import org.getoffer.shortlink.project.dto.req.ShortLinkCreateReqDTO;
 import org.getoffer.shortlink.project.dto.req.ShortLinkPageReqDTO;
+import org.getoffer.shortlink.project.dto.req.ShortLinkUpdateReqDTO;
 import org.getoffer.shortlink.project.dto.resp.ShortLinkCreateRespDTO;
 import org.getoffer.shortlink.project.dto.resp.ShortLinkGroupCountQueryRespDTO;
 import org.getoffer.shortlink.project.dto.resp.ShortLinkPageRespDTO;
@@ -30,6 +31,12 @@ public class ShortLinkController {
     @PostMapping("/v1/create")
     public Result<ShortLinkCreateRespDTO> createShortLink(@RequestBody ShortLinkCreateReqDTO reqDTO) {
         return Results.success(shortLinkService.createShortLink(reqDTO));
+    }
+
+    @PutMapping("/v1/update")
+    public Result<Void> updateShortLink(@RequestBody ShortLinkUpdateReqDTO reqDTO) {
+        shortLinkService.updateShortLink(reqDTO);
+        return Results.success();
     }
 
     @GetMapping("/v1/page")
