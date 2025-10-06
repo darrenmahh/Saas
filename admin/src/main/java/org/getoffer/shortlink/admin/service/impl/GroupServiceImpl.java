@@ -11,7 +11,7 @@ import org.getoffer.shortlink.admin.dao.entity.GroupDO;
 import org.getoffer.shortlink.admin.dao.mapper.GroupMapper;
 import org.getoffer.shortlink.admin.dto.req.ShortLinkGroupSortReqDTO;
 import org.getoffer.shortlink.admin.dto.req.ShortLinkGroupUpdateReqDTO;
-import org.getoffer.shortlink.admin.dto.resq.ShortLinkGroupSaveRespDTO;
+import org.getoffer.shortlink.admin.dto.resq.ShortLinkGroupRespDTO;
 import org.getoffer.shortlink.admin.service.GroupService;
 import org.getoffer.shortlink.admin.toolkit.RandomGenerator;
 import org.springframework.stereotype.Service;
@@ -43,14 +43,14 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
     }
 
     @Override
-    public List<ShortLinkGroupSaveRespDTO> listGroup() {
+    public List<ShortLinkGroupRespDTO> listGroup() {
 
         LambdaQueryWrapper<GroupDO> queryWrapper = Wrappers.lambdaQuery(GroupDO.class)
                 .eq(GroupDO::getDelFlag, 0)
                 .eq(GroupDO::getUsername, UserContext.getUsername())
                 .orderByDesc(GroupDO::getSortOrder, GroupDO::getUpdateTime);
         List<GroupDO> groupDOList = baseMapper.selectList(queryWrapper);
-        return BeanUtil.copyToList(groupDOList, ShortLinkGroupSaveRespDTO.class);
+        return BeanUtil.copyToList(groupDOList, ShortLinkGroupRespDTO.class);
     }
 
     @Override

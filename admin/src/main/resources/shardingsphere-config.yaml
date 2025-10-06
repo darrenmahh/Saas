@@ -3,21 +3,28 @@ dataSources:
   ds_0:
     dataSourceClassName: com.zaxxer.hikari.HikariDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    jdbcUrl: jdbc:mysql://117.72.194.193:3306/link?useUnicode=true&characterEncoding=UTF-8&rewriteBatchedStatements=true&allowMultiQueries=true&serverTimezone=Asia/Shanghai
+    jdbcUrl: jdbc:mysql://117.72.194.193:3306/link?useUnicode=true&characterEncoding=UTF-8&rewriteBatchedStatements=true&allowMultiQueries=true&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: mysqlmima0210
-    # 添加 HikariCP 连接池配置
+    # HikariCP 核心配置
+    poolName: Hikari-Admin
     maximumPoolSize: 10
     minimumIdle: 5
-    connectionTimeout: 30000
-    idleTimeout: 3000000
-    maxLifetime: 600000
+    connectionTimeout: 60000
+    idleTimeout: 600000
+    maxLifetime: 1800000
+    keepaliveTime: 300000
+    autoCommit: true
+    connectionInitSql: SELECT 1
+    # 移除或增大 leakDetectionThreshold
+    # leakDetectionThreshold: 0  # 设置为 0 表示禁用检测（推荐）
+    # 或者设置更大的值，比如 300000（5分钟）
     # 连接测试查询，防止使用已关闭的连接
     connectionTestQuery: SELECT 1
     # 验证连接的超时时间
     validationTimeout: 5000
     # 连接泄露检测阈值（可选）
-    leakDetectionThreshold: 30000
+    # leakDetectionThreshold: 30000
 
 rules:
   - !SHARDING

@@ -6,7 +6,7 @@ import org.getoffer.shortlink.admin.common.convention.result.Results;
 import org.getoffer.shortlink.admin.dto.req.ShortLinkGroupSaveReqDTO;
 import org.getoffer.shortlink.admin.dto.req.ShortLinkGroupSortReqDTO;
 import org.getoffer.shortlink.admin.dto.req.ShortLinkGroupUpdateReqDTO;
-import org.getoffer.shortlink.admin.dto.resq.ShortLinkGroupSaveRespDTO;
+import org.getoffer.shortlink.admin.dto.resq.ShortLinkGroupRespDTO;
 import org.getoffer.shortlink.admin.service.GroupService;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +25,7 @@ public class GroupController {
     }
 
     @GetMapping("/v1/group")
-    public Result<List<ShortLinkGroupSaveRespDTO>> listGroup() {
+    public Result<List<ShortLinkGroupRespDTO>> listGroup() {
         return Results.success(groupService.listGroup());
     }
 
