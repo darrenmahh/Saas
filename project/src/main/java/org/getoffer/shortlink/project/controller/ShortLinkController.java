@@ -33,7 +33,7 @@ public class ShortLinkController {
         return Results.success(shortLinkService.createShortLink(reqDTO));
     }
 
-    @PutMapping("/v1/update")
+    @PostMapping("/v1/update")
     public Result<Void> updateShortLink(@RequestBody ShortLinkUpdateReqDTO reqDTO) {
         shortLinkService.updateShortLink(reqDTO);
         return Results.success();
