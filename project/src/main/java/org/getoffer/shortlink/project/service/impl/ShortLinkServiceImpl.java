@@ -39,9 +39,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
-import static org.getoffer.shortlink.project.common.constant.RedisKeyConstant.GOTO_SHORT_LINK_KEY;
-import static org.getoffer.shortlink.project.common.constant.RedisKeyConstant.LOCK_GOTO_SHORT_LINK_KEY;
+import static org.getoffer.shortlink.project.common.constant.RedisKeyConstant.*;
 
 
 @Slf4j
@@ -268,9 +268,8 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
             
             // 如果路由表中不存在该记录，说明短链接不存在或已被删除
             if (linkGotoDO == null) {
-                // TODO: 建议缓存空值，防止频繁查询不存在的短链接（缓存穿透的完整防御）
-                // stringRedisTemplate.opsForValue().set(key, "", 5, TimeUnit.MINUTES);
-                // TODO: 可以记录日志、返回404页面、或进行风控处理
+                // 防止空值
+                stringRedisTemplate.opsForValue().set(String.format(GOTO_IS_NULL_SHORT_LINK_KEY, fullShortUrl), "-", 30, TimeUnit.MINUTES);
                 return;  // 直接返回，不进行重定向
             }
 
